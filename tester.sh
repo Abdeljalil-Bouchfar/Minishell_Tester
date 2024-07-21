@@ -197,75 +197,68 @@ function testing()
 # At the end of each test, I'm grading your results based on the total tests 
 function grade()
 {
-	total_test=$1
-	percent=100
-	j=$i
-	final_graade=$((j * percent))
-	grade=$((final_graade / total_test))
-	if [ $grade -eq 100 ]
-	then
-		echo
-		printf	"$GREEN%s""\033[1m		Outstanding move => [$grade/100]\033[0m${NORMAL}"$RESET
-		echo "\n"
-	elif [ $grade -ge 80 ]
-	then
-		echo
-		printf	"$GREEN%s""\033[1m		Doing well => [$grade/100]\033[0m${NORMAL}"$RESET
-		echo "\n"
-	else
-		echo
-		printf	"$RED%s""\033[1m		More efforts should be put into this => [$grade/100]\033[0m${NORMAL}"$RESET
-		echo "\n"
-	fi
-	i=0
+    total_test=$1
+    percent=100
+    j=$i
+    final_grade=$((j * percent))
+    grade=$((final_grade / total_test))
+    
+    if [ "$grade" -eq 100 ]; then
+        echo
+        printf "$GREEN%s\033[1m        Outstanding move => [%d/100]\033[0m${NORMAL}$RESET\n" "$GREEN" "$grade"
+        echo
+    elif [ "$grade" -ge 80 ]; then
+        echo
+        printf "$GREEN%s\033[1m        Doing well => [%d/100]\033[0m${NORMAL}$RESET\n" "$GREEN" "$grade"
+        echo
+    else
+        echo
+        printf "$RED%s\033[1m        More effort should be put into this => [%d/100]\033[0m${NORMAL}$RESET\n" "$RED" "$grade"
+        echo
+    fi
+    
+    i=0
 }
 
 
 function checking_errors()
 {
-	MINISHELL=$(echo $1	| $MINISHELL_PATH/minishell 2>&1)
-	MINISHELL_EXIT_STATUS=$?
-	BASH=$(echo $1 | bash 2>&1)
-	BASH_EXIT_STATUS=$?
+    MINISHELL=$(echo "$1" | "$MINISHELL_PATH/minishell" 2>&1)
+    MINISHELL_EXIT_STATUS=$?
+    BASH=$(echo "$1" | bash 2>&1)
+    BASH_EXIT_STATUS=$?
 
-	error=$2
-	if [[ "$MINISHELL" == *"$error"* ]] && [[ "$BASH" == *"$error"* ]] && [[ "$MINISHELL_EXIT_STATUS" == "$BASH_EXIT_STATUS" ]] ;
-		then
-		{
-			let 	"i++"
-			printf	"$GREEN%s""\033[1m[OK]\033[0m	${NORMAL}"$RESET
-			printf 	"$CYAN   $1	 $RESET"
-		}
-	else
-		{
-			printf "$RED%s""\033[1m[KO]\033[0m	${NORMAL}"$RESET
-			printf 	"$CYAN   $1	 $RESET"
-		}
-		fi
-		if [[ ! $MINISHELL =~ $error ]];
-    	then
-    	{
-			echo 	"\n"
-			echo 	$RED$SEPARATOR$RESET
-			printf	$RED"	Minishell output  	: $MINISHELL	$RESET\n"
-			printf	$GREEN"	Bash output       	: $BASH		$RESET\n"
-			echo	$RED$SEPARATOR$RESET
-			sleep 2
-    	}
-		fi
-		if [ "$MINISHELL_EXIT_STATUS" != "$BASH_EXIT_STATUS" ];
-		then
-		{
-			echo
-			printf	$RED"	Minishell exit status   => $RED$MINISHELL_EXIT_STATUS$RESET"
-			echo
-			printf	$GREEN"	Bash exit status        => $GREEN$BASH_EXIT_STATUS$RESET\n"
-			sleep 2
-		}
-	fi
-	sleep 0.2
-	echo
+    error=$2
+
+    if [[ "$MINISHELL" == *"$error"* ]] && [[ "$BASH" == *"$error"* ]] && [ "$MINISHELL_EXIT_STATUS" -eq "$BASH_EXIT_STATUS" ]; then
+        ((i++))
+        printf "$GREEN%s\033[1m[OK]\033[0m ${NORMAL}$RESET"
+        printf "$CYAN   $1 $RESET\n"
+    else
+        printf "$RED%s\033[1m[KO]\033[0m ${NORMAL}$RESET"
+        printf "$CYAN   $1 $RESET\n"
+    fi
+
+    if [[ ! "$MINISHELL" =~ "$error" ]]; then
+        echo
+        echo -e "$RED$SEPARATOR$RESET"
+        printf "$RED    Minishell output   : $MINISHELL $RESET\n"
+        printf "$GREEN   Bash output        : $BASH $RESET\n"
+        echo -e "$RED$SEPARATOR$RESET"
+        sleep 2
+    fi
+
+    if [ "$MINISHELL_EXIT_STATUS" -ne "$BASH_EXIT_STATUS" ]; then
+        echo
+        printf "$RED    Minishell exit status   => $RED$MINISHELL_EXIT_STATUS$RESET\n"
+        printf "$GREEN   Bash exit status        => $GREEN$BASH_EXIT_STATUS$RESET\n"
+        sleep 2
+    fi
+
+    sleep 0.2
+    echo
 }
+
 
 if [[ $1 = "-h" ]] || [[ $1 == "--help" ]] || [[ $# -eq 0 ]];
 then
