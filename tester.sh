@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ###################################################################
 #Script Name	: Minishell Tester                                #
 #Author       	: POMS 			                                  #
@@ -92,30 +92,28 @@ ERRORS="
 ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝                                            
 "
 
-
-
-function	help()
+function help()
 {
-	echo '\033[1mNAME\033[0m'
-	echo "\033[1;37m	Minishell Tester" "${NORMAL} -- A Simple Minishell tester Good Luck 🤞 "
-	echo ""
-	echo '\033[1mSYNOPSIS\033[0m'
-	echo "\033[1;37m	./tester.sh  [-h|--help|a|E|e|p|u|x]"
-	echo "${NORMAL}"
-	echo '\033[1mDESCRIPTION\033[0m\n'
-	echo "	${GREEN}[OK]${RESET} Means that your output and the exist_status are similar to the bash
-	${RED}[KO]${RESET} Means one of your output or the exist_status or both are wrong to the bash\n"
-	echo "${NORMAL} The following options are available:"
-	echo "\033[1;37m	-h or --help	${NORMAL}Help"
-	echo "\033[1;37m	-a		${NORMAL}All"
-	echo "\033[1;37m	-c		${NORMAL}Cd"
-	echo "\033[1;37m	-E		${NORMAL}Echo"
-	echo "\033[1;37m	-e		${NORMAL}Export"
-	echo "\033[1;37m	-p		${NORMAL}Pipes"
-	echo "\033[1;37m	-u		${NORMAL}Unset"
-	echo "\033[1;37m	-x		${NORMAL}Exit\n"
-	# echo "\033[1;37m	-y		${NORMAL}Checklist (Page Correction)"
+    echo -e "\033[1mNAME\033[0m"
+    echo -e "\033[1;37m    Minishell Tester ${NORMAL} -- A Simple Minishell tester Good Luck 🤞"
+    echo ""
+    echo -e "\033[1mSYNOPSIS\033[0m"
+    echo -e "\033[1;37m    ./tester.sh  [-h|--help|a|E|e|p|u|x]"
+    echo -e "${NORMAL}"
+    echo -e "\033[1mDESCRIPTION\033[0m\n"
+    echo -e "    ${GREEN}[OK]${RESET} Means that your output and the exit status are similar to the bash\n    ${RED}[KO]${RESET} Means one of your output or the exit status or both are wrong compared to bash\n"
+    echo -e "${NORMAL} The following options are available:"
+    echo -e "\033[1;37m    -h or --help    ${NORMAL}Help"
+    echo -e "\033[1;37m    -a        ${NORMAL}All"
+    echo -e "\033[1;37m    -c        ${NORMAL}Cd"
+    echo -e "\033[1;37m    -E        ${NORMAL}Echo"
+    echo -e "\033[1;37m    -e        ${NORMAL}Export"
+    echo -e "\033[1;37m    -p        ${NORMAL}Pipes"
+    echo -e "\033[1;37m    -u        ${NORMAL}Unset"
+    echo -e "\033[1;37m    -x        ${NORMAL}Exit\n"
+    # echo -e "\033[1;37m    -y        ${NORMAL}Checklist (Page Correction)"
 }
+
 
 function ProgressBar
 {
