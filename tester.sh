@@ -7,7 +7,7 @@
 
 
 # Put your Minishell's path down here without the last slash '/'
-MINISHELL_PATH=".."
+MINISHELL_PATH="../mlodir_shell"
 
 
 RESET="\033[0m"
@@ -129,87 +129,70 @@ printf "\rCompiling: [${fill// /#}${empty// /-}] ${progress}%%"
 
 function testing()
 {
-	# Based on the subject your program name is minishell
-	# Simply checking if you have an executable file called minishell
-	test -x $MINISHELL_PATH/minishell
-	# Compiling
-	if [ $? != 0 ];
-	then
-	{
-		cd $MINISHELL_PATH ; make ; cd $OLDPWD
-		i=1
-		end=10
-		for idx in $(seq ${i} ${end})
-		do
-			sleep 0.1
-			ProgressBar ${idx} ${end}
-		done
-		echo "\n"
-	}
-	fi
+    # Based on the subject your program name is minishell
+    # Simply checking if you have an executable file called minishell
+    if ! test -x "$MINISHELL_PATH/minishell"; then
+        cd "$MINISHELL_PATH" || exit
+        make
+        cd "$OLDPWD" || exit
+        i=1
+        end=10
+        for idx in $(seq "${i}" "${end}"); do
+            sleep 0.1
+            ProgressBar "${idx}" "${end}"
+        done
+        echo
+    fi
 
-	# Saving Minishell's ouput in a variable
-	MINISHELL=$(echo $1	| $MINISHELL_PATH/minishell 2>&-)
-	# Saving Minishell's exit status the sane for the reference our bash
-	MINISHELL_EXIT_STATUS=$?
-	BASH=$(echo $1 | bash 2>&-)
-	BASH_EXIT_STATUS=$?
+    # Saving Minishell's output in a variable
+    MINISHELL=$(echo "$1" | "$MINISHELL_PATH/minishell" 2>&1)
+    # Saving Minishell's exit status, the same for the reference to Bash
+    MINISHELL_EXIT_STATUS=$?
+    BASH=$(echo "$1" | bash 2>&1)
+    BASH_EXIT_STATUS=$?
 
-	# If your output and the exit status is similar to the bash so your good [OK]
-	if [ "$MINISHELL" == "$BASH" ] && [ "$MINISHELL_EXIT_STATUS" == "$BASH_EXIT_STATUS" ];
-    then
-	{
-		let 	"i++"
-		printf	"$GREEN%s""\033[1m[OK]\033[0m	${NORMAL}"$RESET
-		if [[ -n $2 ]];
-		then
-			printf 	"$CYAN   $2 $RESET	&&	$CYAN $1	 $RESET"
-		else
-			printf 	"$CYAN   $1	 $RESET"
-		fi
+    # If your output and the exit status is similar to the Bash, [OK]
+    if [ "$MINISHELL" = "$BASH" ] && [ "$MINISHELL_EXIT_STATUS" -eq "$BASH_EXIT_STATUS" ]; then
+        ((i++))
+        printf "$GREEN%s\033[1m[OK]\033[0m ${NORMAL}$RESET"
+        if [[ -n $2 ]]; then
+            printf "$CYAN   $2 $RESET && $CYAN $1 $RESET"
+        else
+            printf "$CYAN   $1 $RESET"
+        fi
+        echo
+    else
+        # Else, telling you where the error was in the output or the exit status [KO]
+        printf "$RED%s\033[1m[KO]\033[0m ${NORMAL}$RESET"
+        if [[ -n $2 ]]; then
+            printf "$CYAN   $2 $RESET"
+        else
+            printf "$CYAN   $1 $RESET"
+        fi
+        echo
+    fi
 
-		# echo "\n"
-		# printf	$RESET"	Minishell output  	: $MINISHELL	$RESET\n"
-		# printf	$RESET"	Bash output       	: $BASH		$RESET\n"
-		# echo "\n"
+    if [ "$MINISHELL" != "$BASH" ]; then
+        echo
+        echo -e "$RED$SEPARATOR$RESET"
+        printf "$RED    Minishell output   : $MINISHELL $RESET\n"
+        printf "$GREEN   Bash output        : $BASH $RESET\n"
+        echo -e "$RED$SEPARATOR$RESET"
+        sleep 2
+    fi
 
-	}
-	# Else I'm telling you where the error was in the output or the exit status [KO]
-	else
-	{
-		printf "$RED%s""\033[1m[KO]\033[0m	${NORMAL}"$RESET
-		if [[ -n $2 ]];
-		then
-			printf 	"$CYAN   $2	 $RESET"
-		else
-			printf 	"$CYAN   $1	 $RESET"
-		fi
-	}
-	fi
-	if [ "$MINISHELL" != "$BASH" ];
-    then
-    {
-		echo 	"\n"
-		echo 	$RED$SEPARATOR$RESET
-		printf	$RED"	Minishell output  	: $MINISHELL	$RESET\n"
-		printf	$GREEN"	Bash output       	: $BASH		$RESET\n"
-		echo	$RED$SEPARATOR$RESET
-		sleep 2
-    }
-	fi
-	if [ "$MINISHELL_EXIT_STATUS" != "$BASH_EXIT_STATUS" ];
-	then
-	{
-		echo
-		printf	$RED"	Minishell exit status   => $RED$MINISHELL_EXIT_STATUS$RESET"
-		echo
-		printf	$GREEN"	Bash exit status        => $GREEN$BASH_EXIT_STATUS$RESET\n"
-		sleep 2
-	}
-	fi
-	sleep 0.2
-	echo
+    if [ "$MINISHELL_EXIT_STATUS" -ne "$BASH_EXIT_STATUS" ]; then
+        echo
+        printf "$RED    Minishell exit status   => $RED$MINISHELL_EXIT_STATUS$RESET\n"
+        echo
+        printf "$GREEN   Bash exit status        => $GREEN$BASH_EXIT_STATUS$RESET\n"
+        sleep 2
+    fi
+
+    sleep 0.2
+    echo
 }
+
 
 # At the end of each test, I'm grading your results based on the total tests 
 function grade()
